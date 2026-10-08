@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Unit 2 Review: Python Party Jeopardy</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Barlow:wght@500;600;700&family=IBM+Plex+Mono:wght@500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<header>
+  <div class="title-row">
+    <h1 id="title">Unit 2 Review</h1>
+    <div class="pickbar" aria-live="polite">
+      <button class="btn small" id="pickPrev" aria-label="Previous team picks">◂</button>
+      <span id="pickName">Team 1 picks</span>
+      <button class="btn small" id="pickNext" aria-label="Next team picks">▸</button>
+    </div>
+  </div>
+  <div class="controls">
+    <div class="stepper"><span class="stepper-label">Teams</span>
+      <button class="btn small" id="fewer" aria-label="Remove a team">−</button>
+      <span id="teamNum">7</span>
+      <button class="btn small" id="more" aria-label="Add a team">+</button>
+    </div>
+    <div class="stepper"><span class="stepper-label">Categories</span>
+      <button class="btn small" id="catFewer" aria-label="Fewer categories">−</button>
+      <span id="catNum">4</span>
+      <button class="btn small" id="catMore" aria-label="More categories">+</button>
+    </div>
+    <div class="stepper"><span class="stepper-label">Cards</span>
+      <button class="btn small" id="cardFewer" aria-label="Fewer card squares">−</button>
+      <span id="cardNum">4</span>
+      <button class="btn small" id="cardMore" aria-label="More card squares">+</button>
+    </div>
+    <button class="btn" id="levelBtn" aria-label="Switch question level">Level: Challenge</button>
+    <button class="btn" id="newGame">New game</button>
+    <button class="btn primary" id="finalBtn">Final Jeopardy</button>
+  </div>
+</header>
+
+<main id="board" aria-label="Game board"></main>
+<section id="scores" aria-label="Team scores"></section>
+<div id="modal" role="dialog" aria-modal="true"></div>
+
+<script src="questions.js"></script>
+<script src="game.js"></script>
+</body>
+</html>
