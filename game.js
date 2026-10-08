@@ -1,8 +1,3 @@
-/* ============================================================
-   GAME ENGINE: runs the board. Edit questions.js to change the game.
-   Party mode: every team answers every clue, teams take turns picking,
-   and hidden card squares shake things up.
-   ============================================================ */
 const $ = (s) => document.querySelector(s);
 const boardEl = $("#board"), scoresEl = $("#scores"), modal = $("#modal");
 const REDUCED = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
@@ -19,7 +14,7 @@ let level = GAME.level === "warmup" ? "warmup" : "challenge";
 let timerId = null, typeId = null;
 let escAllowed = false;         // Esc only backs out of a plain clue before the answer
 
-/* ---------- Cards ---------- */
+// Cards
 const CARDS = {
   steal:       { name: "Steal",            text: "If you get this clue right, take its points from any team you choose." },
   robinhood:   { name: "Robin Hood",       text: "First place gives 300 points to last place." },
@@ -46,7 +41,7 @@ const WHEEL = [
   { label: "Halve points", color: "#8e2f4f" }
 ];
 
-/* ---------- Small helpers ---------- */
+// Small helpers
 const rand = (n) => Math.floor(Math.random() * n);
 const pick = (arr) => arr[rand(arr.length)];
 function shuffle(arr) {
@@ -64,7 +59,7 @@ const nameOf = (i) => fmt(teams[i].name);
 const secondsFor = (value) => (GAME.timer && GAME.timer[value]) || 20;
 const bonusFor = (value) => Math.round(value * (GAME.pickerBonus || 0));
 
-/* ---------- Keeping look-alike clues off the same board ---------- */
+// Keeping look-alike clues off the same board
 // A clue's "signature" is its meaningful code lines with spaces removed.
 // Two clues clash if they share a line, or if one has a blank (___)
 // that could be filled in to make the other's line.
@@ -86,7 +81,7 @@ function clash(a, b) {
   return false;
 }
 
-/* ---------- Building a board ---------- */
+// Building a board
 function poolFor(cat, value) {
   const lv = cat[level] || cat.challenge || cat.warmup;
   return (lv && lv[value]) || [];
@@ -142,7 +137,7 @@ function drawCardId() {
   return Object.keys(GAME.cards).find((id) => GAME.cards[id] > 0);
 }
 
-/* ---------- Game setup ---------- */
+// Game setup
 function newGame(keepNames) {
   const names = keepNames ? teams.map((t) => t.name) : [];
   teams = [];
@@ -203,7 +198,7 @@ function advancePicker() {
   }
 }
 
-/* ---------- Modal plumbing ---------- */
+// Modal plumbing
 function openModal(html) { stopTimer(); stopTyping(); modal._reveal = null; modal.innerHTML = html; modal.classList.add("open"); escAllowed = false; }
 function closeModal() { stopTimer(); stopTyping(); modal.classList.remove("open"); modal.innerHTML = ""; escAllowed = false; }
 function stopTimer() { if (timerId) { clearInterval(timerId); timerId = null; } }
@@ -274,7 +269,7 @@ function leaders() {
   return lead.length === teams.length ? [] : lead;
 }
 
-/* ---------- Opening a square ---------- */
+// Opening a square
 function openSquare(c, r) {
   const key = c + "-" + r;
   if (used.has(key)) return;
@@ -454,7 +449,7 @@ function applyWheel(ctx, label, next) {
   }
 }
 
-/* ---------- The clue: everyone answers ---------- */
+// The clue: everyone answers
 function showClue(ctx) {
   const clue = ctx.clue, secs = secondsFor(ctx.value);
   const mods = ctx.mods.length ? '<div class="mods">' + ctx.mods.map((m) => '<span class="mod">' + esc(m) + "</span>").join("") + "</div>" : "";
@@ -569,7 +564,7 @@ function finishSquare(ctx) {
   closeModal(); renderAll();
 }
 
-/* ---------- Lightning round: 3 quick questions instead of the clue ---------- */
+// Lightning round: 3 quick questions instead of the clue
 function lightningRound(ctx) {
   const onBoard = new Set(ROUND.categories.flatMap((c) => c.clues));
   const pool = [100, 200].flatMap((v) => poolFor(ctx.source, v)).filter((c) => !onBoard.has(c));
@@ -607,7 +602,7 @@ function lightningRound(ctx) {
   messageScreen(ctx, "Lightning Round", '<div class="hint">Three quick questions from ' + fmt(ctx.catName) + ". 10 seconds each. Every right team earns 100.</div>", "Start", step);
 }
 
-/* ---------- Final Jeopardy ---------- */
+// Final Jeopardy
 function startFinal() {
   if (used.size < ROUND.categories.length * GAME.values.length &&
       !confirm("Some squares haven't been played yet. Go to Final Jeopardy anyway?")) return;
@@ -661,7 +656,7 @@ function showWinner() {
   $("#wBack").onclick = closeModal;
 }
 
-/* ---------- Header controls ---------- */
+// Header controls
 $("#more").onclick = () => {
   if (teams.length >= 10) return;
   teams.push({ name: "Team " + (teams.length + 1), score: 0, shield: false, skipPick: false }); renderAll();

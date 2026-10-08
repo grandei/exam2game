@@ -1,4 +1,3 @@
-/* Styling for the board. Game content lives in questions.js. */
 :root {
   --bg: #0a1238;
   --board: #16247a;
@@ -34,7 +33,7 @@ button { font-family: inherit; cursor: pointer; }
 button:disabled { cursor: default; }
 button:focus-visible, input:focus-visible { outline: 3px solid var(--gold); outline-offset: 2px; }
 
-/* ---------- Header ---------- */
+/*  Header  */
 header { display: flex; align-items: center; justify-content: space-between; gap: 10px; flex-wrap: wrap; }
 .title-row { display: flex; align-items: center; gap: clamp(10px, 2vw, 28px); flex-wrap: wrap; }
 h1 {
@@ -66,7 +65,7 @@ h1 {
 .stepper .stepper-label { grid-column: 1 / -1; color: var(--muted); }
 .stepper span:not(.stepper-label) { color: var(--ink); font-weight: 700; min-width: 2ch; text-align: center; font-size: 1.15em; }
 
-/* ---------- Board ---------- */
+/*  Board  */
 #board {
   flex: 1; min-height: 0;
   display: grid; grid-template-columns: repeat(4, 1fr); grid-template-rows: auto repeat(5, 1fr);
@@ -88,7 +87,7 @@ h1 {
 .tile:hover:not(:disabled) { background: var(--board-hi); transform: scale(1.03); }
 .tile:disabled { background: var(--board-dim); color: transparent; text-shadow: none; }
 
-/* ---------- Scoreboard ---------- */
+/*  Scoreboard  */
 #scores { display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: var(--gap); }
 .team {
   background: var(--board); border-top: 4px solid var(--muted);
@@ -113,7 +112,7 @@ h1 {
 }
 .team .adj button:hover { color: var(--ink); border-color: var(--muted); }
 
-/* ---------- Modal ---------- */
+/*  Modal  */
 #modal {
   position: fixed; inset: 0; background: var(--board);
   display: none; flex-direction: column;
@@ -190,7 +189,7 @@ pre.codeblock .ln::before {
 .result-list .plus { color: var(--right); }
 .result-list .minus { color: var(--wrong); }
 
-/* ---------- Card draw ---------- */
+/*  Card draw  */
 .typed { font-family: var(--mono); font-size: clamp(18px, 2.2vw, 36px); color: var(--code-ink); min-height: 1.4em; }
 .typed::after { content: "▌"; animation: blink 0.8s steps(1) infinite; }
 @keyframes blink { 50% { opacity: 0; } }
@@ -215,14 +214,14 @@ pre.codeblock .ln::before {
 .card .name { font-family: var(--display); font-size: clamp(30px, 3.2vw, 56px); line-height: 1; }
 .card .text { font-size: clamp(16px, 1.45vw, 24px); font-weight: 600; line-height: 1.3; }
 
-/* ---------- Mini wheel ---------- */
+/*  Mini wheel  */
 .wheelwrap { position: relative; width: min(56vh, 70vw); aspect-ratio: 1; }
 .wheel {
   position: absolute; inset: 0; border-radius: 50%;
   border: 8px solid var(--gold); box-shadow: 0 0 0 6px var(--board-dim);
   transition: transform 3.4s cubic-bezier(.12,.75,.15,1);
 }
-/* Each label sits on a line from the center to the rim, rotated to its slice. */
+
 .wheel .seg { position: absolute; left: 50%; top: 50%; width: 50%; height: 0; transform-origin: 0 0; }
 .wheel .seg span {
   position: absolute; right: 7%; top: 0; transform: translateY(-50%);
@@ -242,7 +241,7 @@ pre.codeblock .ln::before {
   font-family: var(--display); color: #14205e; font-size: clamp(14px, 2vh, 24px);
 }
 
-/* ---------- SyntaxError card glitch ---------- */
+
 .glitch { font-family: var(--mono); color: var(--wrong); font-size: clamp(26px, 4vw, 70px); font-weight: 600; animation: glitch 0.35s steps(2) 6; }
 @keyframes glitch {
   0% { transform: translate(0); text-shadow: 3px 0 var(--ice), -3px 0 var(--gold); }

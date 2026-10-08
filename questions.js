@@ -1,27 +1,3 @@
-/* ============================================================
-   GAME CONTENT AND SETTINGS
-   ------------------------------------------------------------
-   HOW A ROUND WORKS
-   - Teams take turns PICKING a square (the board shows whose pick).
-   - EVERY team answers every clue on a whiteboard before time runs out.
-   - Every correct team earns the points. The picking team gets a bonus.
-   - Some squares hide a CARD (steal, swap, wheel spin...).
-
-   WRITING CLUES
-   - q:    the question. Wrap code in `backticks` for code font.
-   - code: (optional) a multi-line program, shown with line numbers.
-           Use \n between lines.
-   - a:    the answer.  note: (optional) explanation under the answer.
-   - Each category has two levels:
-       challenge  the main game (harder)
-       warmup     easier clues for a first review or a newer class
-   - Each point value has a POOL. A new game picks one clue per value.
-   - The game will not put two clues with the same code on one board
-     (for example a "what's the output" and a "fill in the blank"
-     built from the same line).
-   - Some answers are `SyntaxError` on purpose. Others LOOK broken but
-     run fine, so "SyntaxError" isn't a safe guess.
-   ============================================================ */
 const GAME = {
   title: "Unit 2 Review",
   teamCount: 7,
@@ -37,7 +13,7 @@ const GAME = {
   cardsPerGame: 4,
   // How likely each card is when a card square is found. 0 turns a card off.
   cards: {
-    steal: 3,         // right answer? take this clue's points from any team
+    steal: 3,         // take this clue's points from any team
     robinhood: 1,     // 1st place gives 300 to last place
     swap: 1,          // swap scores with a team within 500 points
     wager: 2,         // every team bets on this clue
@@ -55,7 +31,7 @@ const GAME = {
   values: [100, 200, 300, 400, 500],
   categories: [
 
-    // ======================== OPERATOR OVERLOAD ========================
+    // OPERATOR OVERLOAD
     { name: "Operator Overload",
       challenge: {
         100: [
@@ -127,7 +103,7 @@ const GAME = {
       },
     },
 
-    // ======================== MODULUS MAYHEM ========================
+    // MODULUS MAYHEM
     { name: "Modulus Mayhem",
       challenge: {
         100: [
@@ -197,7 +173,7 @@ const GAME = {
       },
     },
 
-    // ======================== PEMDAS PANIC ========================
+    // PEMDAS PANIC
     { name: "PEMDAS Panic",
       challenge: {
         100: [
@@ -269,7 +245,7 @@ const GAME = {
       },
     },
 
-    // ======================== MODULES & METHODS ========================
+    // MODULES & METHODS
     { name: "Modules & Methods",
       challenge: {
         100: [
@@ -342,7 +318,7 @@ const GAME = {
       },
     },
 
-    // ======================== TYPE TWISTER ========================
+    // TYPE TWISTER
     { name: "Type Twister",
       challenge: {
         100: [
@@ -414,7 +390,7 @@ const GAME = {
       },
     },
 
-    // ======================== RANDOM, MAX & MIN ========================
+    // RANDOM, MAX & MIN 
     { name: "Random, Max & Min",
       challenge: {
         100: [
@@ -486,7 +462,7 @@ const GAME = {
       },
     },
 
-    // ======================== VOCAB VAULT ========================
+    // VOCAB VAULT
     { name: "Vocab Vault",
       challenge: {
         100: [
@@ -553,7 +529,7 @@ const GAME = {
       },
     },
 
-    // ======================== FLOAT OR INT? ========================
+    // FLOAT OR INT? 
     { name: "Float or Int?",
       challenge: {
         100: [
@@ -624,7 +600,7 @@ const GAME = {
       },
     },
 
-    // ======================== SPOT THE BUG ========================
+    // SPOT THE BUG 
     { name: "Spot the Bug",
       challenge: {
         100: [
@@ -697,7 +673,7 @@ const GAME = {
       },
     },
 
-    // ======================== FILL IN THE BLANK ========================
+    // FILL IN THE BLANK 
     { name: "Fill in the Blank",
       challenge: {
         100: [
@@ -763,7 +739,7 @@ const GAME = {
       },
     },
 
-    // ======================== VARIABLE TRACKER ========================
+    // VARIABLE TRACKER 
     { name: "Variable Tracker",
       challenge: {
         100: [
@@ -833,7 +809,7 @@ const GAME = {
       },
     },
 
-    // ======================== RANDOM RANGES ========================
+    // RANDOM RANGES 
     { name: "Random Ranges",
       challenge: {
         100: [
@@ -904,7 +880,7 @@ const GAME = {
     },
   ],
 
-  // ======================== FINAL JEOPARDY ========================
+  // FINAL JEOPARDY
   finals: [
     { category: "String Showdown", q: "What does `print(min(\"easy\", \"medium\", \"New\", \"test\", \"different\", \"prime\"))` display?", a: "`New`", note: "Capital letters sort BEFORE all lowercase letters, so \"New\" is the smallest." },
     { category: "String Showdown", q: "What does `print(min(\"Zebra\", \"apple\", \"Mango\"))` display?", a: "`Mango`", note: "Capital letters come before lowercase, and \"M\" comes before \"Z\"." },
