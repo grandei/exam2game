@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Sign-in Test</title>
+<style>
+/* Same colors as the game. System fonts only, so nothing extra has to load. */
+:root {
+  --bg: #0a1238; --board: #16247a; --board-dim: #0e1650; --gold: #f6c544; --ink: #f4f6ff; --muted: #a9b3e6;
+  --code-bg: #0b1030; --code-ink: #ffe28a; --right: #38b46e; --wrong: #e0524c; --warn: #e8a33a;
+}
+* { box-sizing: border-box; }
+body {
+  margin: 0; min-height: 100vh; background: radial-gradient(ellipse at top, #13206a 0%, var(--bg) 65%); background-color: var(--bg);
+  color: var(--ink); font-family: "Segoe UI", Roboto, Arial, sans-serif; line-height: 1.5;
+  display: flex; justify-content: center; padding: 24px 16px 48px;
+}
+main { width: 100%; max-width: 760px; display: flex; flex-direction: column; gap: 18px; }
+h1 { font-family: Impact, "Arial Narrow Bold", sans-serif; font-weight: 400; color: var(--gold); font-size: clamp(30px, 6vw, 44px); margin: 0; letter-spacing: 0.5px; }
+h2 { font-size: 20px; margin: 0 0 8px; }
+p { margin: 0 0 8px; }
+.sub { color: var(--muted); }
+section { background: var(--board); border-radius: 12px; padding: 18px 20px; border-top: 4px solid var(--gold); }
+.btn {
+  font: inherit; font-weight: 700; font-size: 17px; cursor: pointer; border-radius: 8px; padding: 10px 20px;
+  background: var(--gold); color: #1a1a1a; border: 2px solid var(--gold);
+}
+.btn.ghost { background: transparent; color: var(--ink); border-color: var(--muted); }
+.btn:disabled { opacity: 0.4; cursor: default; }
+.btn:focus-visible { outline: 3px solid var(--ink); outline-offset: 2px; }
+.row { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 12px; }
+.status { margin-top: 14px; padding: 12px 14px; border-radius: 8px; background: var(--board-dim); border-left: 6px solid var(--muted); }
+.status.ok { border-left-color: var(--right); }
+.status.bad { border-left-color: var(--wrong); }
+.status.warn { border-left-color: var(--warn); }
+.status b.big { display: block; font-size: 19px; margin-bottom: 4px; }
+code, pre { font-family: Consolas, "Courier New", monospace; background: var(--code-bg); color: var(--code-ink); border-radius: 6px; }
+code { padding: 1px 6px; }
+pre { padding: 12px 14px; overflow-x: auto; margin: 8px 0; font-size: 14px; }
+ol { margin: 6px 0 0; padding-left: 22px; }
+li { margin-bottom: 6px; }
+.report { white-space: pre-wrap; }
+.hidden { display: none; }
+</style>
+</head>
+<body>
+<main>
+  <div>
+    <h1>Python Jeopardy: Sign-in Test</h1>
+    <p class="sub">This page checks two things before we build the online game: can a school Google account sign in, and can this device reach Firebase on the school network? Nothing is saved.</p>
+  </div>
+
+  <!-- Shown until the Firebase settings are pasted into this file -->
+  <section id="setup" class="hidden">
+    <h2>Setup needed (teacher, one time)</h2>
+    <p>This page doesn't have your Firebase settings yet. Do these steps once, then refresh.</p>
+    <ol>
+      <li>Go to <b>console.firebase.google.com</b>, sign in with your Google account, and create a project (Google Analytics can be turned off).</li>
+      <li><b>Build → Authentication → Get started → Sign-in method → Google</b>. Turn it on, pick your email as the support email, and save.</li>
+      <li>Still in Authentication: <b>Settings → Authorized domains → Add domain</b>. Add your GitHub Pages domain, for example <code>yourname.github.io</code>.</li>
+      <li><b>Build → Realtime Database → Create database</b>. Pick the location closest to you and choose <b>locked mode</b>.</li>
+      <li>Click the gear icon → <b>Project settings → General → Your apps</b> → the web icon <code>&lt;/&gt;</code>. Register the app (skip Firebase Hosting) and copy the <code>firebaseConfig</code> block.</li>
+      <li>Open <code>signin-test.html</code>, find <code>FIREBASE_CONFIG</code> near the bottom, and paste your values in. Upload it to GitHub Pages.</li>
+    </ol>
+  </section>
+
+  <section id="loading" class="hidden"><div class="status">Loading Firebase...</div></section>
+
+  <!-- Shown if the Firebase library itself can't download -->
+  <section id="loadfail" class="hidden">
+    <h2>Couldn't load Firebase</h2>
+    <div class="status bad"><b class="big">This device couldn't download the Firebase library.</b>
+      The school network may be blocking <code>www.gstatic.com</code>, or the device is offline. Try on another network (like a phone hotspot) to confirm, then ask IT about unblocking it.</div>
+  </section>
+
+  <section id="signin" class="hidden">
+    <h2>Test 1: Sign in with Google</h2>
+    <p>Students: click the button and choose your <b>school</b> Google account.</p>
+    <div class="row">
+      <button class="btn" id="signInBtn">Sign in with Google</button>
+      <button class="btn ghost" id="redirectBtn">Popup blocked? Try this instead</button>
+      <button class="btn ghost hidden" id="signOutBtn">Sign out</button>
+    </div>
+    <div id="signinStatus" class="status">Not signed in yet.</div>
+  </section>
+
+  <section id="network" class="hidden">
+    <h2>Test 2: School network</h2>
+    <p>Checks whether this device can hold a live connection to Firebase. The game needs this.</p>
+    <div class="row"><button class="btn" id="netBtn">Run network test</button></div>
+    <div id="netStatus" class="status">Not run yet.</div>
+  </section>
+
+  <section id="results" class="hidden">
+    <h2>Results</h2>
+    <p class="sub">Copy this and send it to your teacher, or paste it into the chat.</p>
+    <pre class="report" id="report"></pre>
+    <div class="row"><button class="btn ghost" id="copyBtn">Copy results</button></div>
+  </section>
+</main>
+
+<script type="module">
+/* ============================================================
+   PASTE YOUR FIREBASE SETTINGS HERE
+   (Project settings → General → Your apps → firebaseConfig)
+   This information is meant to be public. Security comes from
+   Firebase's rules, which we'll set up in the next step.
+   ============================================================ */
+const FIREBASE_CONFIG = {
+  apiKey: "PASTE_HERE",
+  authDomain: "PASTE_HERE",
+  databaseURL: "PASTE_HERE",
+  projectId: "PASTE_HERE",
+  storageBucket: "PASTE_HERE",
+  messagingSenderId: "PASTE_HERE",
+  appId: "PASTE_HERE"
+};
+// If Firebase ever changes its download location, update this one number.
+const FIREBASE_VERSION = "12.18.0";
+
+const $ = (id) => document.getElementById(id);
+const show = (id) => $(id).classList.remove("hidden");
+const hide = (id) => $(id).classList.add("hidden");
+const esc = (s) => String(s ?? "").replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+const results = { signin: "not tested", network: "not tested" };
+
+function setStatus(id, kind, title, body) {
+  const el = $(id);
+  el.className = "status " + kind;
+  el.innerHTML = "<b class='big'>" + title + "</b>" + (body || "");
+}
+function updateReport() {
+  show("results");
+  $("report").textContent =
+    "Device: " + navigator.userAgent.replace(/\s+/g, " ").slice(0, 120) + "\n" +
+    "Page: " + location.host + "\n" +
+    "Sign-in: " + results.signin + "\n" +
+    "Network: " + results.network;
+}
+$("copyBtn").onclick = async () => {
+  try { await navigator.clipboard.writeText($("report").textContent); $("copyBtn").textContent = "Copied"; }
+  catch (e) { $("copyBtn").textContent = "Select the text above and copy it"; }
+};
+
+const configured = Object.values(FIREBASE_CONFIG).every((v) => v && !String(v).includes("PASTE_HERE"));
+if (!configured) {
+  show("setup");
+} else {
+  start();
+}
+
+async function start() {
+  const base = "https://www.gstatic.com/firebasejs/" + FIREBASE_VERSION + "/";
+  let fb;
+  show("loading");
+  try {
+    const timeout = new Promise((_, no) => setTimeout(() => no(new Error("no response after 15 seconds")), 15000));
+    const [app, auth, db] = await Promise.race([Promise.all([
+      import(base + "firebase-app.js"), import(base + "firebase-auth.js"), import(base + "firebase-database.js")
+    ]), timeout]);
+    fb = { ...app, ...auth, ...db };
+  } catch (e) {
+    hide("loading"); show("loadfail"); results.signin = "Firebase library could not load (" + (e.message || e) + ")"; updateReport();
+    return;
+  }
+  hide("loading"); show("signin"); show("network");
+
+  const app = fb.initializeApp(FIREBASE_CONFIG);
+  const auth = fb.getAuth(app);
+  const provider = new fb.GoogleAuthProvider();
+  provider.setCustomParameters({ prompt: "select_account" });   // always ask which account (shared Chromebooks)
+
+  function showUser(user) {
+    if (!user) return;
+    const email = user.email || "";
+    const domain = email.split("@")[1] || "unknown";
+    const personal = domain === "gmail.com";
+    setStatus("signinStatus", personal ? "warn" : "ok",
+      personal ? "Signed in, but with a personal Gmail account" : "It works! Sign-in succeeded.",
+      "<p>Name: <b>" + esc(user.displayName) + "</b><br>Email: <b>" + esc(email) + "</b></p>" +
+      (personal
+        ? "<p>Sign out and try again with your <b>school</b> account. That's the one we need to test.</p>"
+        : "<p>This is <b>Outcome 1</b>: school accounts can sign in. No IT setup needed.</p>"));
+    results.signin = (personal ? "worked, but with a personal Gmail account" : "WORKED (Outcome 1)") + ", domain @" + domain;
+    show("signOutBtn"); hide("redirectBtn"); updateReport();
+  }
+
+  function explain(err) {
+    const code = err && err.code ? err.code : "unknown";
+    const notes = {
+      "auth/popup-closed-by-user": ["Sign-in window closed before finishing",
+        "<p>If Google showed a page saying <b>Access blocked</b> or offering to <b>request access</b>, that's <b>Outcome 2 or 3</b>: the school controls which apps student accounts can use.</p>" +
+        "<ul><li>If there was a <b>Request access</b> button, click it. IT gets the request and can approve the app once for everyone (Outcome 2).</li>" +
+        "<li>If there was no way to request access, the district blocks it (Outcome 3). We'll use the class-code version instead.</li>" +
+        "<li>If you just closed the window by accident, try again.</li></ul>"],
+      "auth/cancelled-popup-request": ["A second sign-in window was opened", "<p>Close any extra windows and click the button once.</p>"],
+      "auth/popup-blocked": ["The browser blocked the sign-in window", "<p>Click <b>Popup blocked? Try this instead</b>, which signs in on this page instead of a popup.</p>"],
+      "auth/unauthorized-domain": ["This website isn't on the approved list yet (teacher setup)",
+        "<p>In Firebase: <b>Authentication → Settings → Authorized domains</b>, add <code>" + esc(location.hostname) + "</code>.</p>"],
+      "auth/operation-not-allowed": ["Google sign-in isn't turned on yet (teacher setup)",
+        "<p>In Firebase: <b>Authentication → Sign-in method → Google</b>, turn it on and save.</p>"],
+      "auth/network-request-failed": ["Couldn't reach Google's sign-in servers",
+        "<p>The school network may be blocking sign-in. Run Test 2 below, and try on a phone hotspot to compare.</p>"],
+      "auth/admin-restricted-operation": ["Sign-in is restricted",
+        "<p>This usually means the school's Google settings blocked it (Outcome 3).</p>"],
+      "auth/invalid-api-key": ["The Firebase settings in this file look wrong (teacher setup)",
+        "<p>Copy the <code>firebaseConfig</code> block again from Project settings.</p>"]
+    };
+    const [title, body] = notes[code] || ["Sign-in didn't work", "<p>Error: <code>" + esc(code) + "</code>. " + esc(err && err.message) + "</p>"];
+    setStatus("signinStatus", "bad", title, body);
+    results.signin = "FAILED: " + code;
+    updateReport();
+  }
+
+  fb.onAuthStateChanged(auth, (user) => { if (user) showUser(user); });
+  fb.getRedirectResult(auth).then((r) => r && showUser(r.user)).catch(explain);
+
+  $("signInBtn").onclick = async () => {
+    $("signInBtn").disabled = true;
+    setStatus("signinStatus", "", "Waiting for Google...", "<p>Choose your school account in the window that opened.</p>");
+    try { const r = await fb.signInWithPopup(auth, provider); showUser(r.user); }
+    catch (e) { explain(e); }
+    finally { $("signInBtn").disabled = false; }
+  };
+  $("redirectBtn").onclick = () => fb.signInWithRedirect(auth, provider).catch(explain);
+  $("signOutBtn").onclick = async () => {
+    await fb.signOut(auth);
+    hide("signOutBtn"); show("redirectBtn");
+    setStatus("signinStatus", "", "Signed out.", "");
+    results.signin = "not tested"; updateReport();
+  };
+
+  // Test 2: Firebase reports ".info/connected" = true once a live connection is open.
+  // Reading it needs no database rules, so this works even with the database locked.
+  $("netBtn").onclick = () => {
+    $("netBtn").disabled = true;
+    setStatus("netStatus", "", "Connecting...", "<p>This takes up to 10 seconds.</p>");
+    let done = false, unsub = () => {};
+    const finish = (ok, why) => {
+      if (done) return; done = true; unsub(); $("netBtn").disabled = false;
+      if (ok) {
+        setStatus("netStatus", "ok", "Connected!", "<p>This device can reach Firebase on this network.</p>");
+        results.network = "CONNECTED";
+      } else {
+        setStatus("netStatus", "bad", "Couldn't connect",
+          "<p>" + why + "</p><p>The school network may be blocking <code>*.firebaseio.com</code> or <code>*.firebasedatabase.app</code>. Try a phone hotspot to compare, then ask IT to allow those addresses.</p>");
+        results.network = "FAILED (" + why + ")";
+      }
+      updateReport();
+    };
+    try {
+      const db = fb.getDatabase(app);
+      unsub = fb.onValue(fb.ref(db, ".info/connected"), (snap) => { if (snap.val() === true) finish(true); },
+        (err) => finish(false, "Error: " + esc(err.message)));
+      setTimeout(() => finish(false, "No connection after 10 seconds."), 10000);
+    } catch (e) {
+      finish(false, "Setup problem: " + esc(e.message) + " (check that databaseURL is filled in)");
+    }
+  };
+}
+</script>
+</body>
+</html>
