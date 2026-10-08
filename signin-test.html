@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Sign-in Test</title>
 <style>
-/* Same colors as the game. System fonts only, so nothing extra has to load. */
+
 :root {
   --bg: #0a1238; --board: #16247a; --board-dim: #0e1650; --gold: #f6c544; --ink: #f4f6ff; --muted: #a9b3e6;
   --code-bg: #0b1030; --code-ink: #ffe28a; --right: #38b46e; --wrong: #e0524c; --warn: #e8a33a;
@@ -48,10 +48,10 @@ li { margin-bottom: 6px; }
 <main>
   <div>
     <h1>Python Jeopardy: Sign-in Test</h1>
-    <p class="sub">This page checks two things before we build the online game: can a school Google account sign in, and can this device reach Firebase on the school network? Nothing is saved.</p>
+    <p class="sub">This page checks two things before we build the online game: can a school Google account sign in, and can this device reach Firebase on the school network? Signing in shares your name and school email with your teacher's test project. Nothing else is stored, and the teacher deletes these test sign-ins afterward.</p>
   </div>
 
-  <!-- Shown until the Firebase settings are pasted into this file -->
+
   <section id="setup" class="hidden">
     <h2>Setup needed (teacher, one time)</h2>
     <p>This page doesn't have your Firebase settings yet. Do these steps once, then refresh.</p>
@@ -67,7 +67,7 @@ li { margin-bottom: 6px; }
 
   <section id="loading" class="hidden"><div class="status">Loading Firebase...</div></section>
 
-  <!-- Shown if the Firebase library itself can't download -->
+
   <section id="loadfail" class="hidden">
     <h2>Couldn't load Firebase</h2>
     <div class="status bad"><b class="big">This device couldn't download the Firebase library.</b>
@@ -103,19 +103,15 @@ li { margin-bottom: 6px; }
 <script type="module">
 
 const FIREBASE_CONFIG = {
-    apiKey: "AIzaSyCDCORWVnDloVrOW_8DqwYXkkCnGfr5rxQ",
-    authDomain: "j-test-4eeda.firebaseapp.com",
-    databaseURL: "https://j-test-4eeda-default-rtdb.firebaseio.com",
-    projectId: "j-test-4eeda",
-    storageBucket: "j-test-4eeda.firebasestorage.app",
-    messagingSenderId: "645578963203",
-    appId: "1:645578963203:web:1cdfb1dc46005502095136"
+  apiKey: "AIzaSyCDCORWVnDloVrOW_8DqwYXkkCnGfr5rxQ",
+  authDomain: "j-test-4eeda.firebaseapp.com",
+  databaseURL: "https://j-test-4eeda-default-rtdb.firebaseio.com",
+  projectId: "j-test-4eeda",
+  storageBucket: "j-test-4eeda.firebasestorage.app",
+  messagingSenderId: "645578963203",
+  appId: "1:645578963203:web:1cdfb1dc46005502095136"
 };
 
-
-
-
-// If Firebase ever changes its download location, update this one number.
 const FIREBASE_VERSION = "12.18.0";
 
 const $ = (id) => document.getElementById(id);
